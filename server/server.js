@@ -2,12 +2,17 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import novelRoutes from './routes/novelRoutes.js';
+import chapterRoutes from './routes/chapterRoutes.js';
 
 dotenv.config({ quiet: true });
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/api/novels', novelRoutes);
+app.use('/api/chapters', chapterRoutes);
 
 app.get('/', (req, res) => res.send("BookVerse API Running"));
 
