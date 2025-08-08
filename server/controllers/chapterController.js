@@ -11,7 +11,7 @@ export const createChapter = async (req, res) => {
       chapterNumber,
     });
 
-    await newChapter.save();
+    await newChapter.save(); 
     res.status(201).json(newChapter);
   } catch (error) {
     res.status(500).json({ message: error.message });

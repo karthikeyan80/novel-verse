@@ -28,18 +28,19 @@ const NovelList = () => {
       {novels.length === 0 ? (
         <p>No novels available.</p>
       ) : (
-        <ul className="space-y-4">
-          {novels.map((novel) => (
-            <li key={novel._id} className="border p-4 rounded shadow">
-              <h3 className="text-lg font-bold">{novel.title}</h3>
-              <p className="text-sm">Author: {novel.authorName}</p>
-              <p className="text-sm text-gray-600">{novel.description || "No description."}</p>
-              {novel.genres.length > 0 && (
-                <p className="text-sm text-gray-500">Genres: {novel.genres.join(', ')}</p>
-              )}
-            </li>
-          ))}
-        </ul>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+  {novels.map((novel) => (
+    <div key={novel._id} className="border p-4 rounded shadow hover:shadow-md transition duration-300">
+      <h3 className="text-lg font-bold">{novel.title}</h3>
+      <p className="text-sm">Author: {novel.authorName}</p>
+      <p className="text-sm text-white">{novel.description || "No description."}</p>
+      {novel.genres.length > 0 && (
+        <p className="text-sm text-gray-500">Genres: {novel.genres.join(', ')}</p>
+      )}
+    </div>
+  ))}
+</div>
+
       )}
     </div>
   );

@@ -10,7 +10,7 @@ import NovelList from './components/NovelList';
 
 const App = () => {
   return (
-    <div className="text-center mt-10 p-4">
+    <div className=" bg-gradient-to-br from-teal-900 via-blue-900 to-black text-white text-center p-4">
       <h1 className="text-3xl font-bold mb-4">📚 Welcome to Novel Verse</h1>
 
       {/* Show sign-in form if user is signed out */}
@@ -30,10 +30,10 @@ const App = () => {
         </div>
 
         {/* Novel Form and List */}
-        <div className="max-w-xl mx-auto mt-10">
-          <NovelForm />
-          <NovelList />
-        </div>
+        <div className="max-w-xl mx-auto mt-10"><NovelForm />
+          </div>
+         <div className="w-full px-4 py-6"><NovelList /></div> 
+        
       </SignedIn>
     </div>
   );
