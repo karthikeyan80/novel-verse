@@ -1,3 +1,4 @@
+// App.jsx
 import {
   SignIn,
   SignedIn,
@@ -10,31 +11,33 @@ import NovelList from './components/NovelList';
 
 const App = () => {
   return (
-    <div className=" bg-gradient-to-br from-teal-900 via-blue-900 to-black text-white text-center p-4">
-      <h1 className="text-3xl font-bold mb-4">📚 Welcome to Novel Verse</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white flex flex-col">
+      <header className="text-center p-6 ">
+        <h1 className="text-4xl font-extrabold mb-2">Novel Verse</h1>
+        <p className="text-gray-300">Read, Create, and Explore Novels</p>
+      </header>
 
-      {/* Show sign-in form if user is signed out */}
-      <SignedOut>
-        <div className="flex justify-center gap-10 mt-10">
-          <SignIn />
-        </div>
-      </SignedOut>
-
-      {/* Show novel features if user is signed in */}
-      <SignedIn>
-        <div className="mb-4">
-          <p className="text-lg">You are signed in!</p>
-          <div className="flex justify-center my-4">
-            <UserButton />
+      <main className="flex-1">
+        {/* Signed Out State */}
+        <SignedOut>
+          <div className="flex justify-center items-center min-h-[60vh]">
+            <SignIn />
           </div>
-        </div>
+        </SignedOut>
 
-        {/* Novel Form and List */}
-        <div className="max-w-xl mx-auto mt-10"><NovelForm />
+        {/* Signed In State */}
+        <SignedIn>
+          <div className="flex-1 flex flex-col p-6 space-y-8">
+            <div className="flex justify-center space-x-8 items-center">
+              <p className="text-lg font-semibold">You are signed in!</p>
+              <UserButton />
+            </div>
+              <div className="flex flex-1/3 justify-center"> <NovelForm /></div>
+
+            <NovelList />
           </div>
-         <div className="w-full px-4 py-6"><NovelList /></div> 
-        
-      </SignedIn>
+        </SignedIn>
+      </main>
     </div>
   );
 };

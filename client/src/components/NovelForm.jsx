@@ -1,4 +1,3 @@
-// src/components/NovelForm.jsx
 import { useState } from "react";
 import api from "../api/api";
 
@@ -24,12 +23,15 @@ const NovelForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded mb-4">
-      <h2 className="text-lg font-semibold mb-2">Create New Novel</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-4"
+    >
+      <h2 className="text-xl font-bold text-white">Create New Novel</h2>
       <input
         type="text"
         placeholder="Title"
-        className="border p-2 mb-2 w-full"
+        className="bg-gray-700 border border-gray-600 text-white p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
@@ -37,14 +39,14 @@ const NovelForm = () => {
       <input
         type="text"
         placeholder="Author"
-        className="border p-2 mb-2 w-full"
+        className="bg-gray-700 border border-gray-600 text-white p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
         required
       />
       <button
         type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-semibold transition"
       >
         Submit
       </button>
