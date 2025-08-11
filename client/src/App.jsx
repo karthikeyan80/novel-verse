@@ -1,4 +1,3 @@
-// App.jsx
 import {
   SignIn,
   SignedIn,
@@ -6,10 +5,10 @@ import {
   UserButton,
 } from "@clerk/clerk-react";
 
-import NovelForm from './components/NovelForm';
+import NovelForm from './pages/NovelForm';
 import NovelList from './components/NovelList';
 import NovelDetails from './pages/NovelDetails';
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Link } from "react-router-dom";
 
 const App = () => {
   return (
@@ -35,18 +34,27 @@ const App = () => {
           </div>
 
           <Routes>
-            {/* Home page with form + list */}
+            {/* Home page: NovelList + button to go to create page */}
             <Route
               path="/"
               element={
-                <div className="flex flex-col p-6 space-y-8">
-                  <div className="flex flex-1/3 justify-center">
-                    <NovelForm />
+                <div className="flex flex-col p-6 space-y-8 ">
+                  <div className="flex justify-center mb-4">
+                    <Link
+                      to="/create-novel"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+                    >
+                      Upload New Novel
+                    </Link>
                   </div>
                   <NovelList />
                 </div>
               }
             />
+
+            {/* Novel creation form page */}
+            <Route path="/create-novel" element={<NovelForm />}  />
+           
 
             {/* Details page */}
             <Route path="/novels/:id" element={<NovelDetails />} />

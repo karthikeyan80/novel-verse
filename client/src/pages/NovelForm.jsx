@@ -23,11 +23,12 @@ const NovelForm = () => {
   };
 
   return (
+    <div className="flex justify-center">
     <form
       onSubmit={handleSubmit}
-      className="bg-gray-800 p-6 rounded-lg shadow-lg space-y-4"
+      className="bg-gray-800 p-8 rounded-lg shadow-lg space-y-4"
     >
-      <h2 className="text-xl font-bold text-white">Create New Novel</h2>
+      <h2 className="w-[50%] h-2 p-8 text-xl font-bold text-white">Create New Novel</h2>
       <input
         type="text"
         placeholder="Title"
@@ -51,7 +52,7 @@ const NovelForm = () => {
         Submit
       </button>
     </form>
-  );
+    </div>  );
 };
 
 export default NovelForm;
