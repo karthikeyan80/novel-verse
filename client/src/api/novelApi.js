@@ -22,3 +22,14 @@ export const createNovel = async (novelData) => {
     throw error;
   }
 };
+
+export const getNovelById = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching novel details:', error);
+    return null;
+  }
+};
+
