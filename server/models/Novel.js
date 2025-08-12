@@ -1,27 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const novelSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  authorName: {
-    type: String,
-    required: true,
-  },
+const NovelSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  authorName: { type: String, required: true },
   description: String,
-  coverImage: String, // URL or filename
-  genres: [String],
-  uploadedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+  coverImage: {
+    data: Buffer,
+    contentType: String,
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  }
+  genres: [String],
+  uploadedBy: String,
+  createdAt: { type: Date, default: Date.now },
 });
 
-const Novel = mongoose.model('Novel', novelSchema);
+// Prevent model overwrite error in development
+const Novel = mongoose.models.Novel || mongoose.model("Novel", NovelSchema);
 
 export default Novel;

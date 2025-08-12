@@ -2,41 +2,31 @@ import Novel from "../models/Novel.js";
 
 export const createNovel = async (req, res) => {
   try {
-    const { title, authorName, description, coverImage, genres, uploadedBy } =
-      req.body;
+    const { title, authorName, description, genres, uploadedBy } = req.body;
 
-    // Validate required fields
     if (!title || !authorName) {
-      return res.status(400).json({
-        message: "Title and author name are required fields",
-      });
+      return res
+        .status(400)
+        .json({ message: "Title and author name are required" });
     }
 
     const newNovel = new Novel({
       title,
       authorName,
       description: description || "",
-      coverImage: coverImage || "",
-      genres: genres || [],
+      coverImage: {
+        data: req.file.buffer,
+        contentType: req.file.mimetype,
+      },
+      genres: genres ? JSON.parse(genres) : [],
       uploadedBy: uploadedBy || null,
     });
 
     await newNovel.save();
-
-    // ✅ Send response only once
-    console.log("Novel created successfully:", newNovel);
-    return res.status(201).json(newNovel);
+    res.status(201).json(newNovel);
   } catch (error) {
     console.error("Error creating novel:", error);
-
-    if (error.name === "ValidationError") {
-      return res.status(400).json({
-        message: "Validation error",
-        details: error.message,
-      });
-    }
-
-    return res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -48,7 +38,16 @@ export const getAllNovels = async (req, res) => {
     const novels = await Novel.find();
     console.log(`Found ${novels.length} novels`);
 
-    res.status(200).json(novels);
+  // In backend getAllNovels
+res.status(200).json(
+  novels.map(novel => ({
+    ...novel._doc,
+    coverImage: novel.coverImage?.data
+      ? `data:${novel.coverImage.contentType};base64,${novel.coverImage.data.toString('base64')}`
+      : null
+  }))
+);
+
   } catch (error) {
     console.error("Error in getAllNovels:", error);
     res.status(500).json({

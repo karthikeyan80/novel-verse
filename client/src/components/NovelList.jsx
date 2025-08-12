@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { fetchAllNovels } from '../api/novelApi';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { fetchAllNovels } from "../api/novelApi";
+import { Link } from "react-router-dom";
 
 const NovelList = () => {
   const [novels, setNovels] = useState([]);
@@ -37,19 +37,34 @@ const NovelList = () => {
               key={novel._id}
               to={`/novels/${novel._id}`}
               className="bg-gray-800 border border-gray-700 p-4 rounded-lg shadow hover:shadow-lg hover:scale-105 transform transition duration-300 fade-in-up flex flex-col"
-              style={{ animationDelay: `${index * 0.1}s`, minHeight: "220px" }}
+              style={{ animationDelay: `${index * 0.1}s`, minHeight: "300px" }}
             >
+              {/* Cover Image */}
+              {novel.coverImage ? (
+                <img
+                  src={novel.coverImage}
+                  alt={`${novel.title} cover`}
+                  className="w-full h-40 object-cover rounded mb-3"
+                />
+              ) : (
+                <div className="w-full h-40 bg-gray-600 flex items-center justify-center rounded mb-3 text-gray-300">
+                  No Image
+                </div>
+              )}
+
+              {/* Title & Author */}
               <h3 className="text-lg font-bold text-white">{novel.title}</h3>
               <p className="text-sm text-gray-300">Author: {novel.authorName}</p>
 
-              {/* Fixed-height description block */}
+              {/* Description */}
               <p className="text-sm text-gray-400 flex-grow line-clamp-3">
                 {novel.description || "No description."}
               </p>
 
+              {/* Genres */}
               {novel.genres.length > 0 && (
                 <p className="text-xs text-gray-500 mt-2">
-                  Genres: {novel.genres.join(', ')}
+                  Genres: {novel.genres.join(", ")}
                 </p>
               )}
             </Link>

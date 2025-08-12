@@ -1,8 +1,17 @@
 import express from 'express';
 import { createNovel, getAllNovels } from '../controllers/novelController.js';
 import Novel from '../models/Novel.js';
+import multer from "multer";
 
 const router = express.Router();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+
+
+router.post("/create", upload.single("coverImage"), createNovel);
+router.get("/", getAllNovels);
+
 
 router.post('/create', createNovel);
 router.get('/all', getAllNovels);
