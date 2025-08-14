@@ -101,7 +101,7 @@ const NovelForm = () => {
             />
             <label
               htmlFor="cover-image-input"
-              className="inline-block p-4 w-[20vw] bg-black/90 text-white text-center cursor-pointer border border-gray-600 rounded hover:bg-gray-800 transition"
+              className="p-4 flex bg-black/90 text-white text-center cursor-pointer border border-gray-600 rounded hover:bg-gray-800 transition"
             >
               Upload Image
             </label>

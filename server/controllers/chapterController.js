@@ -1,29 +1,50 @@
-import Chapter from '../models/Chapter.js';
+import Chapter from "../models/Chapter.js";
 
-export const createChapter = async (req, res) => {
+// Add new chapter
+export const addChapter = async (req, res) => {
   try {
     const { novel, chapterTitle, content, chapterNumber } = req.body;
 
-    const newChapter = new Chapter({
-      novel,
-      chapterTitle,
-      content,
-      chapterNumber,
-    });
+    if (!novel || !chapterTitle || !content || !chapterNumber) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-    await newChapter.save(); 
+    const newChapter = new Chapter({ novel, chapterTitle, content, chapterNumber });
+    await newChapter.save();
+
     res.status(201).json(newChapter);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error adding chapter:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
+// Get all chapters for a novel
 export const getChaptersByNovel = async (req, res) => {
   try {
     const { novelId } = req.params;
     const chapters = await Chapter.find({ novel: novelId }).sort({ chapterNumber: 1 });
-    res.status(200).json(chapters);
+
+    res.json(chapters);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error fetching chapters:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get single chapter
+export const getChapter = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const chapter = await Chapter.findById(id);
+
+    if (!chapter) {
+      return res.status(404).json({ message: "Chapter not found" });
+    }
+
+    res.json(chapter);
+  } catch (error) {
+    console.error("Error fetching chapter:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

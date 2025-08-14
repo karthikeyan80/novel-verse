@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchAllNovels } from "../api/novelApi";
 import { Link } from "react-router-dom";
-
+import ClipLoader from "react-spinners/ClipLoader";
 const NovelList = () => {
   const [novels, setNovels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +21,7 @@ const NovelList = () => {
     getNovels();
   }, []);
 
-  if (loading) return <p className="text-center text-gray-300">Loading novels...</p>;
+  if (loading) return <p className="text-center text-gray-300"><ClipLoader color="#4c3ff0" size={50} /></p>;
 
   return (
     <section className="flex flex-col h-full">
@@ -36,7 +36,7 @@ const NovelList = () => {
             <Link
               key={novel._id}
               to={`/novels/${novel._id}`}
-              className="bg-gray-800 border border-gray-700 p-4 rounded-lg shadow hover:shadow-lg hover:scale-105 transform transition duration-300 fade-in-up flex flex-col"
+              className="bg-gray-800 border border-gray-700 p-2.5 rounded-lg shadow hover:shadow-lg hover:scale-105 transform transition duration-300 fade-in-up flex flex-col"
               style={{ animationDelay: `${index * 0.1}s`, minHeight: "300px" }}
             >
               {/* Cover Image */}
@@ -44,7 +44,7 @@ const NovelList = () => {
                 <img
                   src={novel.coverImage}
                   alt={`${novel.title} cover`}
-                  className="w-full h-40 object-cover rounded mb-3"
+                  className="w-full h-50 object-cover rounded mb-3"
                 />
               ) : (
                 <div className="w-full h-40 bg-gray-600 flex items-center justify-center rounded mb-3 text-gray-300">
@@ -56,10 +56,7 @@ const NovelList = () => {
               <h3 className="text-lg font-bold text-white">{novel.title}</h3>
               <p className="text-sm text-gray-300">Author: {novel.authorName}</p>
 
-              {/* Description */}
-              <p className="text-sm text-gray-400 flex-grow line-clamp-3">
-                {novel.description || "No description."}
-              </p>
+              
 
               {/* Genres */}
               {novel.genres.length > 0 && (

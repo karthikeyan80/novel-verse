@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 const NovelDetails = () => {
   const { id } = useParams(); // Get ID from URL
@@ -21,7 +22,7 @@ const NovelDetails = () => {
     if (id) fetchNovel();
   }, [id]);
 
-  if (loading) return <p className="text-center text-gray-300">Loading novel...</p>;
+  if (loading) return <p className="text-center text-gray-300"><ClipLoader color="#4c3ff0" size={50} /></p>;
   if (!novel) return <p className="text-center text-red-400">Novel not found</p>;
 
   return (
@@ -37,3 +38,5 @@ const NovelDetails = () => {
 };
 
 export default NovelDetails;
+
+
