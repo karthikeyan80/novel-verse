@@ -9,6 +9,7 @@ import NovelForm from './pages/NovelForm';
 import NovelList from './components/NovelList';
 import NovelDetails from './pages/NovelDetails';
 import { Route, Routes, Link } from "react-router-dom";
+import AddChapter from "./pages/AddChapter";
 
 const App = () => {
   return (
@@ -58,6 +59,7 @@ const App = () => {
 
             {/* Details page */}
             <Route path="/novels/:id" element={<NovelDetails />} />
+            <Route path="/novels/:id/add-chapter" element={<AddChapter />} />
           </Routes>
         </SignedIn>
       </main>

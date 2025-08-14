@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
+import { motion } from "framer-motion";
+import ClipLoader from "react-spinners/ClipLoader"; // Spinner
 import api from "../api/api";
 
 const genresList = ["Fantasy", "Romance", "Sci-Fi", "Thriller", "Mystery"];
@@ -13,6 +15,15 @@ const NovelForm = () => {
   const [coverImage, setCoverImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [genres, setGenres] = useState([]);
+
+  const [loading, setLoading] = useState(true); // Spinner control
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // spinner duration (1s)
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleGenreChange = (genre) => {
     setGenres((prev) =>
@@ -54,43 +65,54 @@ const NovelForm = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center">
+        <ClipLoader color="#4c3ff0" size={40} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex justify-center">
-      <form
+      <motion.form
         onSubmit={handleSubmit}
-        className="bg-gray-800 p-8 rounded-lg shadow-lg space-y-4 w-full max-w-lg"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="backdrop-blur-lg bg-black/20 border border-blue-800 p-8 rounded-lg shadow-blue-900/50 space-y-4 w-full max-w-lg"
       >
-        <h2 className="text-xl font-bold text-white text-center">
+        <motion.h2
+          className="text-xl font-bold text-white text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           Create New Novel
-        </h2>
+        </motion.h2>
 
-        <input
-          type="text"
-          placeholder="Title"
-          className="bg-gray-700 border border-gray-600 text-white p-2 rounded w-full"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+        {[
+          <input key="title" type="text" placeholder="Title" className="backdrop-blur-lg bg-black/20 border border-blue-800 p-4 rounded-lg shadow-blue-900/50 w-full max-w-lg" value={title} onChange={(e) => setTitle(e.target.value)} required />,
+          <input key="author" type="text" placeholder="Author" className="backdrop-blur-lg bg-black/20 border border-blue-800 p-4 rounded-lg shadow-blue-900/50 w-full max-w-lg" value={author} onChange={(e) => setAuthor(e.target.value)} required />,
+          <textarea key="desc" placeholder="Description" className="backdrop-blur-lg bg-black/20 border border-blue-800 p-4 rounded-lg shadow-blue-900/50 w-full max-w-lg" value={description} onChange={(e) => setDescription(e.target.value)} />
+        ].map((element, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 + index * 0.1 }}
+          >
+            {element}
+          </motion.div>
+        ))}
 
-        <input
-          type="text"
-          placeholder="Author"
-          className="bg-gray-700 border border-gray-600 text-white p-2 rounded w-full"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          required
-        />
-
-        <textarea
-          placeholder="Description"
-          className="bg-gray-700 border border-gray-600 text-white p-2 rounded w-full h-24"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-
-        <div>
-          <label className="block text-white mb-1">Cover Image</label>
+        {/* Cover Image Upload */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <label className="block text-white mb-5.5">Cover Image</label>
           <div className="relative">
             <input
               id="cover-image-input"
@@ -101,7 +123,7 @@ const NovelForm = () => {
             />
             <label
               htmlFor="cover-image-input"
-              className="p-4 flex bg-black/90 text-white text-center cursor-pointer border border-gray-600 rounded hover:bg-gray-800 transition"
+              className="backdrop-blur-lg bg-black/20 border border-blue-800 p-4 rounded-lg shadow-blue-900/50 w-full max-w-lg text-center cursor-pointer"
             >
               Upload Image
             </label>
@@ -113,31 +135,46 @@ const NovelForm = () => {
               className="mt-2 w-[32vw] h-40 object-cover"
             />
           )}
-        </div>
+        </motion.div>
 
-        <div>
+        {/* Genres */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.8 }}
+        >
           <label className="block text-white mb-1">Genres</label>
           <div className="flex flex-wrap gap-2">
-            {genresList.map((genre) => (
-              <label key={genre} className="inline-flex items-center space-x-2">
+            {genresList.map((genre, i) => (
+              <motion.label
+                key={genre}
+                className="inline-flex items-center space-x-2"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.9 + i * 0.05 }}
+              >
                 <input
                   type="checkbox"
                   checked={genres.includes(genre)}
                   onChange={() => handleGenreChange(genre)}
                 />
                 <span className="text-white">{genre}</span>
-              </label>
+              </motion.label>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        <button
+        {/* Submit Button */}
+        <motion.button
           type="submit"
           className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-white font-semibold transition"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1 }}
         >
           Submit
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
     </div>
   );
 };
