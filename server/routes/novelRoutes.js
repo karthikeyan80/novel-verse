@@ -1,5 +1,5 @@
 import express from 'express';
-import { createNovel, getAllNovels } from '../controllers/novelController.js';
+import { createNovel, getAllNovels, getNovelById } from '../controllers/novelController.js';
 import Novel from '../models/Novel.js';
 import multer from "multer";
 
@@ -15,6 +15,8 @@ router.get("/", getAllNovels);
 
 router.post('/create', createNovel);
 router.get('/all', getAllNovels);
+router.get("/:id", getNovelById); 
+
 
 router.get('/:id', async (req, res) => {
   try {

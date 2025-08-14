@@ -56,3 +56,24 @@ res.status(200).json(
     });
   }
 };
+export const getNovelById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const novel = await Novel.findById(id);
+
+    if (!novel) {
+      return res.status(404).json({ message: "Novel not found" });
+    }
+
+    // Convert buffer to base64 string
+    res.status(200).json({
+      ...novel._doc,
+      coverImage: novel.coverImage?.data
+        ? `data:${novel.coverImage.contentType};base64,${novel.coverImage.data.toString("base64")}`
+        : null,
+    });
+  } catch (error) {
+    console.error("Error fetching novel:", error);
+    res.status(500).json({ message: "Failed to fetch novel", error: error.message });
+  }
+};

@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import ClipLoader from "react-spinners/ClipLoader";
+import { motion } from "framer-motion";
 
 const NovelDetails = () => {
-  const { id } = useParams(); // Get novel ID from URL
+  const { id } = useParams();
   const [novel, setNovel] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,13 +13,11 @@ const NovelDetails = () => {
   useEffect(() => {
     const fetchNovelAndChapters = async () => {
       try {
-        // Fetch novel details
         const { data: novelData } = await axios.get(
           `http://localhost:5000/api/novels/${id}`
         );
         setNovel(novelData);
 
-        // Fetch chapters for this novel
         const { data: chapterData } = await axios.get(
           `http://localhost:5000/api/chapters/novel/${id}`
         );
@@ -46,38 +45,111 @@ const NovelDetails = () => {
     );
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <motion.div
+      className="p-6 max-w-4xl mx-auto"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Cover Image */}
+      <motion.div
+        className="mb-6"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
+      >
+        {novel.coverImage ? (
+          <img
+            src={novel.coverImage}
+            alt={`${novel.title} cover`}
+            className="w-full max-h-[400px] object-cover rounded-lg shadow-lg"
+          />
+        ) : (
+          <div className="w-full h-60 bg-gray-600 flex items-center justify-center rounded-lg text-gray-300">
+            No Image
+          </div>
+        )}
+      </motion.div>
+
       {/* Novel Info */}
-      <h1 className="text-3xl font-bold">{novel.title}</h1>
-      <p className="text-gray-300">Author: {novel.authorName}</p>
-      <p className="mt-4">{novel.description}</p>
+      <motion.h1
+        className="text-3xl font-bold"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+      >
+        {novel.title}
+      </motion.h1>
+      <motion.p
+        className="text-gray-300"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        Author: {novel.authorName}
+      </motion.p>
+      <motion.p
+        className="mt-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        {novel.description}
+      </motion.p>
       {novel.genres?.length > 0 && (
-        <p className="mt-2 text-gray-500">
+        <motion.p
+          className="mt-2 text-gray-500"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
           Genres: {novel.genres.join(", ")}
-        </p>
+        </motion.p>
       )}
 
       {/* Add Chapter Button */}
-      <div className="mt-6">
+      <motion.div
+        className="mt-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+      >
         <Link
           to={`/novels/${id}/add-chapter`}
           className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-semibold"
         >
           + Add Chapter
         </Link>
-      </div>
+      </motion.div>
 
       {/* Chapters List */}
-      <div className="mt-8">
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.7 }}
+      >
         <h2 className="text-2xl font-semibold mb-4">Chapters</h2>
         {chapters.length === 0 ? (
           <p className="text-gray-400">No chapters yet.</p>
         ) : (
-          <ul className="space-y-3">
+          <motion.ul
+            className="space-y-3"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.1 } },
+            }}
+          >
             {chapters.map((chapter) => (
-              <li
+              <motion.li
                 key={chapter._id}
                 className="bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition"
+                variants={{
+                  hidden: { opacity: 0, y: 10 },
+                  visible: { opacity: 1, y: 0 },
+                }}
               >
                 <Link
                   to={`/chapters/${chapter._id}`}
@@ -85,12 +157,12 @@ const NovelDetails = () => {
                 >
                   Chapter {chapter.chapterNumber}: {chapter.chapterTitle}
                 </Link>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
