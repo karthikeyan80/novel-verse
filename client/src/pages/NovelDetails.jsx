@@ -35,7 +35,7 @@ const NovelDetails = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex flex-col justify-center items-center h-screen">
         <motion.div
           className="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin"
           initial={{ opacity: 0 }}
@@ -50,7 +50,7 @@ const NovelDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6">
+    <div className="min-h-screen text-white p-6">
       {/* Novel Header */}
       <div className="flex gap-6 mb-8">
         <img
