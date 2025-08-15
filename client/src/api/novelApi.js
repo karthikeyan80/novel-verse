@@ -1,5 +1,6 @@
 // src/api/novelApi.js
 import api from "/src/api/api.js"; // import the central Axios instance
+import axios from "axios";
 
 // Fetch all novels
 export const fetchAllNovels = async () => {
@@ -25,11 +26,12 @@ export const createNovel = async (novelData) => {
 
 export const getNovelById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/${id}`);
+    const response = await api.get(`/novels/${id}`); // uses baseURL from api.js
     return response.data;
   } catch (error) {
-    console.error('Error fetching novel details:', error);
+    console.error("Error fetching novel details:", error);
     return null;
   }
 };
+
 

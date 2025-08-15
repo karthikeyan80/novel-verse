@@ -1,168 +1,113 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
-import ClipLoader from "react-spinners/ClipLoader";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { getNovelById } from "../api/novelApi";
+import { getChaptersByNovel } from "../api/chapterapi.js";
 
 const NovelDetails = () => {
-  const { id } = useParams();
+  // Match your route param name (adjust if in App.jsx you used ":id")
+  const { id: novelId } = useParams();  
+
   const [novel, setNovel] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchNovelAndChapters = async () => {
-      try {
-        const { data: novelData } = await axios.get(
-          `http://localhost:5000/api/novels/${id}`
-        );
-        setNovel(novelData);
+    if (!novelId) return; // Prevent calling API with undefined
 
-        const { data: chapterData } = await axios.get(
-          `http://localhost:5000/api/chapters/novel/${id}`
-        );
-        setChapters(chapterData);
+    const fetchData = async () => {
+      try {
+        const [novelData, chaptersData] = await Promise.all([
+          getNovelById(novelId),
+          getChaptersByNovel(novelId)
+        ]);
+        setNovel(novelData);
+        setChapters(chaptersData);
       } catch (error) {
-        console.error("Error fetching novel/chapters:", error.message);
+        console.error("Error fetching novel details:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) fetchNovelAndChapters();
-  }, [id]);
+    fetchData();
+  }, [novelId]);
 
-  if (loading)
+  if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <ClipLoader color="#4c3ff0" size={50} />
-      </div>
-    );
-
-  if (!novel)
-    return (
-      <p className="text-center text-red-400 mt-8">Novel not found</p>
-    );
-
-  return (
-    <motion.div
-      className="p-6 max-w-4xl mx-auto"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* Cover Image */}
-      <motion.div
-        className="mb-6"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1, duration: 0.4 }}
-      >
-        {novel.coverImage ? (
-          <img
-            src={novel.coverImage}
-            alt={`${novel.title} cover`}
-            className="w-full max-h-[400px] object-cover rounded-lg shadow-lg"
-          />
-        ) : (
-          <div className="w-full h-60 bg-gray-600 flex items-center justify-center rounded-lg text-gray-300">
-            No Image
-          </div>
-        )}
-      </motion.div>
-
-      {/* Novel Info */}
-      <motion.h1
-        className="text-3xl font-bold"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.4 }}
-      >
-        {novel.title}
-      </motion.h1>
-      <motion.p
-        className="text-gray-300"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-      >
-        Author: {novel.authorName}
-      </motion.p>
-      <motion.p
-        className="mt-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-      >
-        {novel.description}
-      </motion.p>
-      {novel.genres?.length > 0 && (
-        <motion.p
-          className="mt-2 text-gray-500"
+      <div className="flex justify-center items-center h-screen">
+        <motion.div
+          className="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          Genres: {novel.genres.join(", ")}
-        </motion.p>
-      )}
+        />
+      </div>
+    );
+  }
 
-      {/* Add Chapter Button */}
-      <motion.div
-        className="mt-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-      >
-        <Link
-          to={`/novels/${id}/add-chapter`}
-          className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white font-semibold"
-        >
-          + Add Chapter
-        </Link>
-      </motion.div>
+  if (!novel) {
+    return <p className="text-center text-red-500">Novel not found.</p>;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6">
+      {/* Novel Header */}
+      <div className="flex gap-6 mb-8">
+        <img
+          src={novel.coverImage || "/default-cover.jpg"}
+          alt={novel.title}
+          className="w-48 h-64 object-cover rounded-lg shadow-lg"
+        />
+        <div>
+          <h1 className="text-3xl font-bold">{novel.title}</h1>
+          <p className="text-lg text-gray-400">by {novel.authorName}</p>
+          <p className="mt-4">{novel.description}</p>
+          <div className="mt-4">
+            {novel.genres?.map((genre, index) => (
+              <span
+                key={index}
+                className="bg-gray-700 px-3 py-1 rounded-full mr-2"
+              >
+                {genre}
+              </span>
+            ))}
+          </div>
+          <Link
+            to={`/novels/${novelId}/add-chapter`}
+            className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg"
+          >
+            Add Chapter
+          </Link>
+        </div>
+      </div>
 
       {/* Chapters List */}
-      <motion.div
-        className="mt-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-      >
-        <h2 className="text-2xl font-semibold mb-4">Chapters</h2>
-        {chapters.length === 0 ? (
-          <p className="text-gray-400">No chapters yet.</p>
-        ) : (
+      <h2 className="text-2xl font-semibold mb-4">Chapters</h2>
+      <AnimatePresence>
+        {chapters.length > 0 ? (
           <motion.ul
-            className="space-y-3"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: {},
-              visible: { transition: { staggerChildren: 0.1 } },
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-4"
           >
             {chapters.map((chapter) => (
               <motion.li
                 key={chapter._id}
-                className="bg-gray-800 p-4 rounded-lg shadow-md hover:bg-gray-700 transition"
-                variants={{
-                  hidden: { opacity: 0, y: 10 },
-                  visible: { opacity: 1, y: 0 },
-                }}
+                className="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl transition"
               >
-                <Link
-                  to={`/chapters/${chapter._id}`}
-                  className="text-blue-400 hover:underline"
-                >
-                  Chapter {chapter.chapterNumber}: {chapter.chapterTitle}
+                <Link to={`/chapters/${chapter._id}`}>
+                  <h3 className="text-lg font-semibold">
+                    Chapter {chapter.chapterNumber}: {chapter.chapterTitle}
+                  </h3>
                 </Link>
               </motion.li>
             ))}
           </motion.ul>
+        ) : (
+          <p>No chapters available yet.</p>
         )}
-      </motion.div>
-    </motion.div>
+      </AnimatePresence>
+    </div>
   );
 };
 

@@ -58,7 +58,8 @@ const App = () => {
            
 
             {/* Details page */}
-            <Route path="/novels/:id" element={<NovelDetails />} />
+           <Route path="/novels/:id" element={<NovelDetails />} />
+
             <Route path="/novels/:id/add-chapter" element={<AddChapter />} />
           </Routes>
         </SignedIn>
