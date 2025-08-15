@@ -1,18 +1,35 @@
-import Chapter from "../models/Chapter.js";
-
 // Add new chapter
+import Chapter from "../models/Chapter.js";
+import Novel from "../models/Novel.js";
+
 export const addChapter = async (req, res) => {
   try {
-    const { novel, chapterTitle, content, chapterNumber } = req.body;
+    const { novelId, chapterTitle, content } = req.body;
 
-    if (!novel || !chapterTitle || !content || !chapterNumber) {
+    // Validate required fields
+    if (!novelId || !chapterTitle || !content) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const newChapter = new Chapter({ novel, chapterTitle, content, chapterNumber });
-    await newChapter.save();
+    // Check if novel exists
+    const novel = await Novel.findById(novelId);
+    if (!novel) {
+      return res.status(404).json({ message: "Novel not found" });
+    }
 
-    res.status(201).json(newChapter);
+    // Determine chapter number
+    const chapterCount = await Chapter.countDocuments({ novel: novelId });
+
+    const newChapter = new Chapter({
+      novel: novelId,
+      chapterTitle,
+      content,
+      chapterNumber: chapterCount + 1,
+    });
+
+    await newChapter.save();
+    res.status(201).json({ message: "Chapter added successfully", chapter: newChapter });
+
   } catch (error) {
     console.error("Error adding chapter:", error);
     res.status(500).json({ message: "Server error" });

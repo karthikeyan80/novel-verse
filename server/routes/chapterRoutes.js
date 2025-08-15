@@ -4,7 +4,7 @@ import { addChapter, getChaptersByNovel, getChapter } from "../controllers/chapt
 const router = express.Router();
 
 // POST - Add chapter
-router.post("/", addChapter);
+router.post("/add", addChapter);
 
 // GET - All chapters for a specific novel
 router.get("/novel/:novelId", getChaptersByNovel);
