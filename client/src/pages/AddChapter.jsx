@@ -66,7 +66,7 @@ const AddChapter = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-12 h-12 border-2 border-[#E0FFFF] border-t-transparent rounded-full animate-spin" />
           </motion.div>
         ) : (
           <motion.form

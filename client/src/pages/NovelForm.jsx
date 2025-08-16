@@ -67,14 +67,14 @@ const NovelForm = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center">
-        <ClipLoader color="#4c3ff0" size={40} />
+      <div className="flex justify-center items-center mt-10">
+        <ClipLoader color="#E0FFFF" size={40} />
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center mt-4">
       <motion.form
         onSubmit={handleSubmit}
         initial={{ opacity: 0, y: 50 }}
