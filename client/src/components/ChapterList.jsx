@@ -18,8 +18,9 @@ const ChapterList = ({ chapters }) => {
               className="bg-gray-800 p-4 rounded-lg shadow-md hover:shadow-xl transition"
               whileHover={{ scale: 1.02 }}
             >
+              {/* Link to chapter details page */}
               <Link to={`/chapters/${chapter._id}`}>
-                <h3 className="text-lg font-semibold">
+                <h3 className="text-lg font-semibold text-white">
                   Chapter {chapter.chapterNumber}: {chapter.chapterTitle}
                 </h3>
               </Link>

@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AddChapter = () => {
+  const { id: novelId } = useParams(); // from route /novels/:id/add-chapter
+  const navigate = useNavigate();
+
   const [chapterTitle, setChapterTitle] = useState("");
   const [chapterContent, setChapterContent] = useState("");
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Simulate loading time (replace with real API call if needed)
+  // Simulate loading (optional)
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000); // 1 second
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -33,7 +38,7 @@ const AddChapter = () => {
     reader.readAsText(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!chapterTitle || !chapterContent) {
@@ -41,12 +46,29 @@ const AddChapter = () => {
       return;
     }
 
-    console.log({
-      title: chapterTitle,
-      content: chapterContent,
-    });
+    try {
+      const newChapter = {
+        chapterTitle,
+        content: chapterContent,
+      };
 
-    alert("Chapter ready to be sent to backend!");
+      // server expects POST /api/chapters/add with body including novelId
+      const response = await axios.post(
+        `http://localhost:5000/api/chapters/add`,
+        {
+          novelId,
+          ...newChapter,
+        }
+      );
+
+      console.log("Chapter saved:", response.data);
+
+      // Redirect to ChapterDetails (server returns { chapter: {...} })
+      navigate(`/chapters/${response.data.chapter._id}`);
+    } catch (error) {
+      console.error("Error saving chapter:", error);
+      alert("Failed to save chapter. Please try again.");
+    }
   };
 
   return (
@@ -115,8 +137,8 @@ const AddChapter = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
             >
-                 <label
-                htmlFor="chaptitle"
+              <label
+                htmlFor="fileUpload"
                 className="ml-2 block mb-1 font-semibold text-gray-200"
               >
                 Add Chapter
