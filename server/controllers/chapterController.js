@@ -1,7 +1,8 @@
-// Add new chapter
+// chapterController.js
 import Chapter from "../models/Chapter.js";
 import Novel from "../models/Novel.js";
 
+// Add new chapter
 export const addChapter = async (req, res) => {
   try {
     const { novelId, chapterTitle, content } = req.body;
@@ -17,7 +18,7 @@ export const addChapter = async (req, res) => {
       return res.status(404).json({ message: "Novel not found" });
     }
 
-    // Determine chapter number
+    // Determine next chapter number
     const chapterCount = await Chapter.countDocuments({ novel: novelId });
 
     const newChapter = new Chapter({
@@ -28,11 +29,14 @@ export const addChapter = async (req, res) => {
     });
 
     await newChapter.save();
-    res.status(201).json({ message: "Chapter added successfully", chapter: newChapter });
 
+    res.status(201).json({
+      message: "Chapter added successfully",
+      chapter: newChapter,
+    });
   } catch (error) {
-    console.error("Error adding chapter:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error adding chapter:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -40,12 +44,15 @@ export const addChapter = async (req, res) => {
 export const getChaptersByNovel = async (req, res) => {
   try {
     const { novelId } = req.params;
-    const chapters = await Chapter.find({ novel: novelId }).sort({ chapterNumber: 1 });
+
+    const chapters = await Chapter.find({ novel: novelId })
+      .sort({ chapterNumber: 1 })
+      .select("chapterTitle chapterNumber createdAt"); // return only needed fields
 
     res.json(chapters);
   } catch (error) {
-    console.error("Error fetching chapters:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching chapters:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -53,7 +60,7 @@ export const getChaptersByNovel = async (req, res) => {
 export const getChapter = async (req, res) => {
   try {
     const { id } = req.params;
-    const chapter = await Chapter.findById(id);
+    const chapter = await Chapter.findById(id).populate("novel", "title authorName");
 
     if (!chapter) {
       return res.status(404).json({ message: "Chapter not found" });
@@ -61,7 +68,7 @@ export const getChapter = async (req, res) => {
 
     res.json(chapter);
   } catch (error) {
-    console.error("Error fetching chapter:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching chapter:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

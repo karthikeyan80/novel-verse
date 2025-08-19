@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const chapterSchema = new mongoose.Schema({
   novel: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Novel',
+    ref: "Novel",
     required: true,
   },
   chapterTitle: {
@@ -21,9 +21,11 @@ const chapterSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
-const Chapter = mongoose.model('Chapter', chapterSchema);
+// Prevent model overwrite error in development
+const Chapter =
+  mongoose.models.Chapter || mongoose.model("Chapter", chapterSchema);
 
 export default Chapter;
