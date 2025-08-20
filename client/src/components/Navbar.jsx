@@ -50,32 +50,37 @@ const Navbar = () => {
         >
           {menuOpen ? <HiX /> : <HiMenu />}
         </button>
+{/* Mobile Dropdown */}
+{menuOpen && (
+  <div className="fixed top-0 left-0 w-full h-1/3 bg-gradient-to-br from-gray-900 via-blue-800 to-gray-900/95 backdrop-blur-md shadow-xl rounded-b-3xl flex flex-col items-center justify-center space-y-6 p-6 md:hidden z-40 animate-slideDown">
+    {/* Close Button inside menu */}
+      
 
-        {/* Mobile Dropdown */}
-        {menuOpen && (
-          <div className="absolute top-full right-0 mt-2 w-56 bg-gray-800/95 backdrop-blur-sm rounded-lg shadow-lg flex flex-col p-4 space-y-3 md:hidden z-40">
-            {/* Home Link */}
-            <Link
-              to="/"
-              className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition text-center"
-              onClick={() => setMenuOpen(false)}
-            >
-              Home
-            </Link>
-            {/* Upload New Novel */}
-            <Link
-              to="/create-novel"
-              className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition text-center"
-              onClick={() => setMenuOpen(false)}
-            >
-              Upload New Novel
-            </Link>
-            <div className="flex justify-center items-center gap-2">
-              <UserButton />
-              <p className="text-sm text-gray-300">User</p>
-            </div>
-          </div>
-        )}
+    {/* Links */}
+    <Link
+      to="/"
+      className="w-full text-center text-lg font-semibold bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl transition"
+      onClick={() => setMenuOpen(false)}
+    >
+      Home
+    </Link>
+
+    <Link
+      to="/create-novel"
+      className="w-full text-center text-lg font-semibold bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-xl transition"
+      onClick={() => setMenuOpen(false)}
+    >
+      Upload New Novel
+    </Link>
+
+    {/* User Section */}
+    <div className="flex flex-col items-center space-y-2">
+      <UserButton />
+      <p className="text-sm text-gray-300">User</p>
+    </div>
+  </div>
+)}
+
       </nav>
 
       {/* Routes moved to App.jsx */}

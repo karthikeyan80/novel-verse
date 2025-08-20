@@ -11,13 +11,22 @@ import ChapterDetails from "./pages/ChapterDetails";
 const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white flex flex-col">
-      <main className="flex flex-col">
+      <main className="flex flex-col flex-1">
         {/* Signed Out State */}
-        <SignedOut>
-          <div className="flex justify-center items-center min-h-[60vh]">
-            <SignIn />
-          </div>
-        </SignedOut>
+       <SignedOut>
+      <div className="flex justify-center items-center flex-1">
+        <SignIn
+  appearance={{
+    elements: {
+      card: "clerk-card", // custom class
+    },
+  }}
+/>
+
+      </div>
+    </SignedOut>
+
+        
 
         {/* Signed In State */}
         <SignedIn>

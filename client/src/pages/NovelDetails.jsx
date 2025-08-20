@@ -34,7 +34,7 @@ const NovelDetails = () => {
   }, [novelId]);
 
   return (
-    <div className="min-h-screen text-white p-6">
+    <div className="min-h-screen text-white p-4">
       {/* AnimatePresence will handle both spinner and content */}
       <AnimatePresence mode="wait">
         {loading ? (
@@ -67,21 +67,21 @@ const NovelDetails = () => {
             transition={{ duration: 0.6 }}
           >
             {/* Novel Header */}
-            <div className="flex gap-6 mb-8">
+            <div className="flex flex-col">
               <img
                 src={novel.coverImage || "/default-cover.jpg"}
                 alt={novel.title}
-                className="w-48 h-64 object-cover rounded-lg shadow-lg"
+                className="max-h-[55vh] rounded-lg shadow-lg p-4"
               />
-              <div>
-                <h1 className="text-3xl font-bold">{novel.title}</h1>
+              <div className="p-4">
+                <h1 className="text-3xl mt-2 font-bold">{novel.title}</h1>
                 <p className="text-lg text-gray-400">by {novel.authorName}</p>
                 <p className="mt-4">{novel.description}</p>
-                <div className="mt-4">
+                <div className="mt-4 mb-6 p-2">
                   {novel.genres?.map((genre, index) => (
                     <span
                       key={index}
-                      className="bg-gray-700 px-3 py-1 rounded-full mr-2"
+                      className="bg-gray-500 p-3 mr-2 rounded-full"
                     >
                       {genre}
                     </span>
@@ -89,7 +89,7 @@ const NovelDetails = () => {
                 </div>
                 <Link
                   to={`/novels/${novelId}/add-chapter`}
-                  className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg"
+                  className="inline-block bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg mb-0"
                 >
                   Add Chapter
                 </Link>

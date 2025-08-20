@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const ChapterList = ({ chapters }) => {
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">Chapters</h2>
+      <h2 className="text-2xl font-semibold p-6">Chapters</h2>
       <motion.ul
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
