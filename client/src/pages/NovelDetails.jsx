@@ -65,56 +65,58 @@ const NovelDetails = () => {
             transition={{ duration: 0.6 }}
             className="w-full"
           >
-            {/* Cover Image - Full Width */}
-            <div className="w-full">
-              <img
-                src={novel.coverImage || "/default-cover.jpg"}
-                alt={novel.title}
-                className="w-full max-h-[60vh] object-cover p-10"
-              />
-            </div>
+            {/* Cover Image */}
+           {/* Cover Image Section */}
+<div className="w-full flex items-center justify-center py-8">
+  <img
+    src={novel.coverImage || "/default-cover.jpg"}
+    alt={novel.title}
+    className="w-full md:w-16 lg:w-260 object-cover rounded-lg shadow-lg"
+  />
+</div>
 
-            {/* Info Section */}
-            <div className="px-6 md:px-12 py-8 w-full mx-auto flex flex-col">
-              <h1 className="text-4xl md:text-5xl font-extrabold bg-gray-400 bg-clip-text text-transparent">
-                {novel.title}
-              </h1>
-              <p className="text-lg text-gray-400 italic mt-2">
-                by {novel.authorName}
-              </p>
-              <p className="mt-6 text-gray-300 leading-relaxed text-base md:text-lg">
-                {novel.description}
-              </p>
+{/* Info Section */}
+<div className="px-6 md:px-16 py-6 w-full mx-auto text-left">
+  <h1 className="text-3xl md:text-4xl font-extrabold bg-gray-400 bg-clip-text text-transparent">
+    {novel.title}
+  </h1>
+  <p className="text-lg text-gray-400 italic mt-2">
+    by {novel.authorName}
+  </p>
+  <p className="mt-6 text-gray-300 leading-relaxed text-base md:text-lg max-w-4xl">
+    {novel.description}
+  </p>
 
-              {/* Genres */}
-              <div className="mt-6 flex flex-wrap gap-3">
-                {novel.genres?.map((genre, index) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 rounded-full text-sm font-medium 
-                      bg-gradient-to-r from-purple-500 to-pink-500 shadow-md"
-                  >
-                    {genre}
-                  </span>
-                ))}
-              </div>
+  {/* Genres */}
+  <div className="mt-6 flex flex-wrap gap-3">
+    {novel.genres?.map((genre, index) => (
+      <span
+        key={index}
+        className="px-4 py-2 rounded-full text-sm font-medium 
+          bg-gradient-to-r from-purple-500 to-pink-500 shadow-md"
+      >
+        {genre}
+      </span>
+    ))}
+  </div>
 
-              {/* Add Chapter Button */}
-              <Link
-                to={`/novels/${novelId}/add-chapter`}
-                className="inline-block w-80 mt-8 px-6 py-3 rounded-lg 
-                bg-gradient-to-r from-blue-600 to-cyan-500 
-                text-white font-semibold shadow-lg 
-                hover:scale-105 transform transition duration-300"
-              >
-                ➕ Add Chapter
-              </Link>
-            </div>
+  {/* Add Chapter Button */}
+  <Link
+    to={`/novels/${novelId}/add-chapter`}
+    className="inline-block mt-8 px-6 py-3 rounded-lg 
+    bg-gradient-to-r from-blue-600 to-cyan-500 
+    text-white font-semibold shadow-lg 
+    hover:scale-105 transform transition duration-300"
+  >
+    ➕ Add Chapter
+  </Link>
+</div>
 
-            {/* Chapter List */}
-            <div className="px-6 md:px-12 w-full mt-10 mx-auto mb-4">
-              <ChapterList chapters={chapters} />
-            </div>
+{/* Chapter List */}
+<div className="px-6 md:px-16 w-full mt-10 mx-auto mb-4">
+  <ChapterList chapters={chapters} />
+</div>
+
           </motion.div>
         )}
       </AnimatePresence>
