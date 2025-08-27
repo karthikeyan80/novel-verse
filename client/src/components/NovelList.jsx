@@ -50,31 +50,42 @@ const NovelList = () => {
   }, [debouncedSearch, selectedGenre]);
 
   return (
-    <section className="flex flex-col h-full">
+    <section className="flex flex-col h-full items-center">
       <h2 className="text-2xl font-bold mb-4 text-white">Novel List</h2>
 
       {/* Search & Filter Controls */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-4">
-        <input
-          type="text"
-          placeholder="Search by title or author..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="px-3 py-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none flex-1"
-        />
-        <select
-          value={selectedGenre}
-          onChange={(e) => setSelectedGenre(e.target.value)}
-          className="px-3 py-2 rounded-lg bg-gray-700 text-white border border-gray-600"
-        >
-          <option value="">All Genres</option>
-          {genres.map((g) => (
-            <option key={g} value={g}>
-              {g}
-            </option>
-          ))}
-        </select>
-      </div>
+     {/* Search & Filter Controls */}
+<div className="w-full max-w-3xl flex flex-col sm:flex-row gap-3 mb-8 justify-center">
+  <input
+    type="text"
+    placeholder="Search by title or author..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="w-full sm:w-96 px-3 py-2 
+               bg-gray-800 text-white border border-gray-700 
+               rounded-lg focus:outline-none 
+               focus:ring-2 focus:ring-cyan-400 
+               hover:border-cyan-300
+               transition-colors duration-300"
+  />
+  <select
+    value={selectedGenre}
+    onChange={(e) => setSelectedGenre(e.target.value)}
+    className="w-full sm:w-52 px-3 py-2 
+               rounded-lg bg-gray-800 text-white border border-gray-700 
+               focus:outline-none focus:ring-2 focus:ring-cyan-400 
+               hover:border-cyan-300
+               transition-colors duration-300"
+  >
+    <option value="">All Genres</option>
+    {genres.map((g) => (
+      <option key={g} value={g}>
+        {g}
+      </option>
+    ))}
+  </select>
+</div>
+
 
       {/* Loading indicator that doesn't remove the controls */}
       {loading && (
@@ -83,7 +94,10 @@ const NovelList = () => {
         </div>
       )}
 
-      {novels.length === 0 ? (
+      {/* Show message only when not loading AND a filter is active */}
+      {!loading &&
+      (debouncedSearch.trim() !== "" || selectedGenre !== "") &&
+      novels.length === 0 ? (
         <div className="flex-1 flex items-center justify-center text-gray-400">
           No novels found.
         </div>

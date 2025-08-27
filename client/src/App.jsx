@@ -16,14 +16,13 @@ const App = () => {
         {/* Signed Out State */}
        <SignedOut>
       <div className="flex justify-center items-center flex-1">
-        <SignIn
-  appearance={{
+        <SignIn/>
+{/* appearance={{
     elements: {
       card: "clerk-card", // custom class
     },
-  }}
-/>
-
+  }} */
+  }
       </div>
     </SignedOut>
 
