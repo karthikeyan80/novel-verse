@@ -13,6 +13,12 @@ const NovelSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+// Faster searches:
+NovelSchema.index({ title: "text", description: "text", authorName: "text" });
+// Faster genre filtering:
+NovelSchema.index({ genres: 1 });
+
+
 // Prevent model overwrite error in development
 const Novel = mongoose.models.Novel || mongoose.model("Novel", NovelSchema);
 

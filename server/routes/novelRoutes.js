@@ -1,34 +1,26 @@
-import express from 'express';
-import { createNovel, getAllNovels, getNovelById } from '../controllers/novelController.js';
-import Novel from '../models/Novel.js';
+import express from "express";
+import {
+  createNovel,
+  getAllNovels,
+  getNovelById,
+  listGenres,
+} from "../controllers/novelController.js";
 import multer from "multer";
 
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-
-
+// Create a novel
 router.post("/create", upload.single("coverImage"), createNovel);
+
+// Get all novels (with optional search/filter)
 router.get("/", getAllNovels);
 
+// List distinct genres
+router.get("/genres", listGenres);
 
-router.post('/create', createNovel);
-router.get('/all', getAllNovels);
-router.get("/:id", getNovelById); 
+// Get single novel by ID
+router.get("/:id", getNovelById);
 
-
-router.get('/:id', async (req, res) => {
-  try {
-    const novel = await Novel.findById(req.params.id);
-
-    if (!novel) {
-      return res.status(404).json({ message: 'Novel not found' });
-    }
-
-    res.json(novel);
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-});
 export default router;

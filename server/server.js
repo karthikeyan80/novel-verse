@@ -2,10 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import novelRoutes from './routes/novelRoutes.js';
-import chapterRoutes from './routes/chapterRoutes.js';
+import novelRoutes from "./routes/novelRoutes.js";
+import chapterRoutes from "./routes/chapterRoutes.js";
 import User from "./models/User.js";
-
 
 dotenv.config({ quiet: true });
 const app = express();
@@ -13,13 +12,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/novels', novelRoutes);
-
-// Chapter routes
+// Routes
+app.use("/api/novels", novelRoutes);
 app.use("/api/chapters", chapterRoutes);
 
-
-app.get('/', (req, res) => res.send("BookVerse API Running"));
+app.get("/", (req, res) => res.send("BookVerse API Running"));
 
 // ✅ Route to sync/save user
 app.post("/api/users/sync", async (req, res) => {

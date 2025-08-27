@@ -29,25 +29,37 @@ export const createNovel = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 export const getAllNovels = async (req, res) => {
   try {
-    console.log("Fetching all novels...");
+    console.log("Fetching novels with filters...");
 
-    // Simplified query without population for now
-    const novels = await Novel.find();
+    const { search, genre } = req.query; // ?search=magic&genre=fantasy
+    const query = {};
+
+    // Search in title or authorName (case-insensitive)
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { authorName: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    // Filter by genre
+    if (genre) {
+      query.genres = genre;
+    }
+
+    const novels = await Novel.find(query);
     console.log(`Found ${novels.length} novels`);
 
-  // In backend getAllNovels
-res.status(200).json(
-  novels.map(novel => ({
-    ...novel._doc,
-    coverImage: novel.coverImage?.data
-      ? `data:${novel.coverImage.contentType};base64,${novel.coverImage.data.toString('base64')}`
-      : null
-  }))
-);
-
+    res.status(200).json(
+      novels.map(novel => ({
+        ...novel._doc,
+        coverImage: novel.coverImage?.data
+          ? `data:${novel.coverImage.contentType};base64,${novel.coverImage.data.toString("base64")}`
+          : null
+      }))
+    );
   } catch (error) {
     console.error("Error in getAllNovels:", error);
     res.status(500).json({
@@ -56,6 +68,7 @@ res.status(200).json(
     });
   }
 };
+
 export const getNovelById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -75,5 +88,15 @@ export const getNovelById = async (req, res) => {
   } catch (error) {
     console.error("Error fetching novel:", error);
     res.status(500).json({ message: "Failed to fetch novel", error: error.message });
+  }
+};
+
+export const listGenres = async (_req, res) => {
+  try {
+    const genres = await Novel.distinct("genres");
+    res.json((genres || []).filter(Boolean).sort());
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to list genres" });
   }
 };

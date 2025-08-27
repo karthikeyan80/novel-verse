@@ -1,43 +1,91 @@
-import React, { useEffect, useState } from "react";
-import { fetchAllNovels } from "../api/novelApi";
+import { useEffect, useState } from "react";
+import { fetchAllNovels, fetchGenres } from "../api/novelApi";
 import { Link } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NovelList = () => {
   const [novels, setNovels] = useState([]);
+  const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // filters
+  const [search, setSearch] = useState("");
+  const [selectedGenre, setSelectedGenre] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // debounce search input to avoid fetching on every keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // fetch genres once
+  useEffect(() => {
+    const getGenres = async () => {
+      try {
+        const data = await fetchGenres();
+        setGenres(data);
+      } catch (error) {
+        console.error("Failed to fetch genres:", error.message);
+      }
+    };
+    getGenres();
+  }, []);
+
+  // fetch novels whenever filters change (initially fetches all)
   useEffect(() => {
     const getNovels = async () => {
+      setLoading(true);
       try {
-        const data = await fetchAllNovels();
+        const data = await fetchAllNovels(debouncedSearch, selectedGenre);
         setNovels(data);
       } catch (error) {
         console.error("Failed to fetch novels:", error.message);
       } finally {
-        // add a tiny delay to smooth out transition
-        setTimeout(() => setLoading(false), 300);
+        setTimeout(() => setLoading(false), 200); // smooth transition
       }
     };
-
     getNovels();
-  }, []);
-
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-64">
-        <ClipLoader color="#E0FFFF" size={50} />
-      </div>
-    );
+  }, [debouncedSearch, selectedGenre]);
 
   return (
     <section className="flex flex-col h-full">
       <h2 className="text-2xl font-bold mb-4 text-white">Novel List</h2>
 
+      {/* Search & Filter Controls */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <input
+          type="text"
+          placeholder="Search by title or author..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="px-3 py-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none flex-1"
+        />
+        <select
+          value={selectedGenre}
+          onChange={(e) => setSelectedGenre(e.target.value)}
+          className="px-3 py-2 rounded-lg bg-gray-700 text-white border border-gray-600"
+        >
+          <option value="">All Genres</option>
+          {genres.map((g) => (
+            <option key={g} value={g}>
+              {g}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Loading indicator that doesn't remove the controls */}
+      {loading && (
+        <div className="flex justify-center items-center h-24">
+          <ClipLoader color="#E0FFFF" size={28} />
+        </div>
+      )}
+
       {novels.length === 0 ? (
         <div className="flex-1 flex items-center justify-center text-gray-400">
-          No novels available.
+          No novels found.
         </div>
       ) : (
         <AnimatePresence>
@@ -74,13 +122,15 @@ const NovelList = () => {
                   )}
 
                   {/* Title & Author */}
-                  <h3 className="text-lg font-bold text-white">{novel.title}</h3>
+                  <h3 className="text-lg font-bold text-white">
+                    {novel.title}
+                  </h3>
                   <p className="text-sm text-gray-300">
                     Author: {novel.authorName}
                   </p>
 
                   {/* Genres */}
-                  {novel.genres.length > 0 && (
+                  {Array.isArray(novel.genres) && novel.genres.length > 0 && (
                     <p className="text-xs text-gray-500 mt-2">
                       Genres: {novel.genres.join(", ")}
                     </p>
