@@ -7,6 +7,7 @@ import NovelForm from "./pages/NovelForm";
 import NovelDetails from "./pages/NovelDetails";
 import AddChapter from "./pages/AddChapter";
 import ChapterDetails from "./pages/ChapterDetails";
+import UserSync from "./components/userSync";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
         {/* Signed In State */}
         <SignedIn>
           <Navbar />
+          <UserSync />
           <Routes>
             <Route
               path="/"
