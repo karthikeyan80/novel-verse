@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useUser } from "@clerk/clerk-react";
 import { getNovelById } from "../api/novelApi";
 import { getChaptersByNovel } from "../api/chapterapi.js";
 import ClipLoader from "react-spinners/ClipLoader";
@@ -8,6 +9,7 @@ import ChapterList from "../components/ChapterList.jsx";
 
 const NovelDetails = () => {
   const { id: novelId } = useParams();
+  const { user } = useUser();
   const [novel, setNovel] = useState(null);
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,9 @@ const NovelDetails = () => {
 
     fetchData();
   }, [novelId]);
+
+  const isOwner =
+    user && novel && novel.uploadedBy && user.id === novel.uploadedBy;
 
   return (
     <div className="min-h-screen text-white">
@@ -99,16 +104,18 @@ const NovelDetails = () => {
                 ))}
               </div>
 
-              {/* Add Chapter Button */}
-              <Link
-                to={`/novels/${novelId}/add-chapter`}
-                className="inline-block mt-8 px-6 py-3 rounded-lg 
-                bg-gradient-to-r from-blue-600 to-cyan-500 
-                text-white font-semibold shadow-lg 
-                hover:scale-105 transform transition duration-300"
-              >
-                ➕ Add Chapter
-              </Link>
+              {/* Add Chapter Button (visible only to novel owner) */}
+              {isOwner && (
+                <Link
+                  to={`/novels/${novelId}/add-chapter`}
+                  className="inline-block mt-8 px-6 py-3 rounded-lg 
+                  bg-gradient-to-r from-blue-600 to-cyan-500 
+                  text-white font-semibold shadow-lg 
+                  hover:scale-105 transform transition duration-300"
+                >
+                  ➕ Add Chapter
+                </Link>
+              )}
             </div>
 
             {/* Chapter List */}

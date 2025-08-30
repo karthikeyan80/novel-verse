@@ -2,7 +2,7 @@
 import Chapter from "../models/Chapter.js";
 import Novel from "../models/Novel.js";
 
-// Add new chapter
+// Add new chapter (only the novel owner can add)
 export const addChapter = async (req, res) => {
   try {
     const { novelId, chapterTitle, content } = req.body;
@@ -16,6 +16,19 @@ export const addChapter = async (req, res) => {
     const novel = await Novel.findById(novelId);
     if (!novel) {
       return res.status(404).json({ message: "Novel not found" });
+    }
+
+    // Authorization: allow only the creator (uploadedBy) to add a chapter
+    // req.user is set by verifyClerkJWT middleware and should contain the Clerk user id as `sub`
+    const requesterId = req.user?.sub; // Clerk's subject (user id)
+    if (!requesterId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    if (!novel.uploadedBy || novel.uploadedBy !== requesterId) {
+      return res
+        .status(403)
+        .json({ message: "Only the novel author can add chapters" });
     }
 
     // Determine next chapter number
@@ -60,7 +73,10 @@ export const getChaptersByNovel = async (req, res) => {
 export const getChapter = async (req, res) => {
   try {
     const { id } = req.params;
-    const chapter = await Chapter.findById(id).populate("novel", "title authorName");
+    const chapter = await Chapter.findById(id).populate(
+      "novel",
+      "title authorName"
+    );
 
     if (!chapter) {
       return res.status(404).json({ message: "Chapter not found" });

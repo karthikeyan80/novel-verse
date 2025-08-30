@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 
 const AddChapter = () => {
   const { id: novelId } = useParams(); // from route /novels/:id/add-chapter
   const navigate = useNavigate();
+  const { getToken } = useAuth();
 
   const [chapterTitle, setChapterTitle] = useState("");
   const [chapterContent, setChapterContent] = useState("");
@@ -52,12 +54,19 @@ const AddChapter = () => {
         content: chapterContent,
       };
 
+      const token = await getToken();
+
       // server expects POST /api/chapters/add with body including novelId
       const response = await axios.post(
         `http://localhost:5000/api/chapters/add`,
         {
           novelId,
           ...newChapter,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -67,7 +76,10 @@ const AddChapter = () => {
       navigate(`/chapters/${response.data.chapter._id}`);
     } catch (error) {
       console.error("Error saving chapter:", error);
-      alert("Failed to save chapter. Please try again.");
+      alert(
+        error?.response?.data?.message ||
+          "Failed to save chapter. You may not have permission."
+      );
     }
   };
 
