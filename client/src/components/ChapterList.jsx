@@ -1,26 +1,64 @@
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-// import { markChapterAsRead } from "@/api/progressapi"; // new API function
+import { useUser } from "@clerk/clerk-react";
+import { useEffect } from "react";
+import { getUserProgress, markChapterAsRead } from "../api/progressapi.js";
 
-const ChapterList = ({ chapters, userProgress = [], userId }) => {
+const ChapterList = ({ chapters, userProgress = null, novelId }) => {
   const navigate = useNavigate();
+  const { user } = useUser();
 
-  // Handle chapter click -> save progress -> navigate
+  // Refresh progress data when component mounts or when userProgress changes
+  useEffect(() => {
+    console.log("ChapterList received userProgress:", userProgress);
+  }, [userProgress]);
+
+  // Handle chapter click -> mark as read -> navigate
   const handleChapterClick = async (chapterId) => {
     try {
-      if (userId) {
-        await markChapterAsRead(userId, chapterId);
+      // Mark chapter as read when clicked
+      if (user && novelId) {
+        await markChapterAsRead(user.id, novelId, chapterId);
+        console.log("Chapter marked as read:", chapterId);
       }
       navigate(`/chapters/${chapterId}`);
     } catch (error) {
-      console.error("Error marking progress:", error);
-      navigate(`/chapters/${chapterId}`); // fallback navigation
+      console.error("Error marking chapter as read:", error);
+      // Still navigate even if marking fails
+      navigate(`/chapters/${chapterId}`);
     }
+  };
+
+  // Check if chapter is read (completed)
+  const isChapterRead = (chapterId) => {
+    if (!userProgress || !userProgress.readChapters) {
+      console.log("No userProgress or readChapters:", {
+        userProgress,
+        chapterId,
+      });
+      return false;
+    }
+
+    // Convert chapterId to string for comparison
+    const chapterIdString = chapterId.toString();
+
+    // Check if this specific chapter is in the readChapters array
+    // Server now returns string IDs, so we can use includes directly
+    const isRead = userProgress.readChapters.includes(chapterIdString);
+
+    console.log("Chapter read status:", {
+      chapterId: chapterIdString,
+      isRead,
+      readChaptersCount: userProgress.readChapters?.length,
+      readChapters: userProgress.readChapters,
+    });
+    return isRead;
   };
 
   return (
     <div>
       <h2 className="text-2xl font-semibold p-6">Chapters</h2>
+
       <motion.ul
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -29,7 +67,8 @@ const ChapterList = ({ chapters, userProgress = [], userId }) => {
       >
         {chapters.length > 0 ? (
           chapters.map((chapter) => {
-            const isRead = userProgress.includes(chapter._id); // check progress
+            const isRead = isChapterRead(chapter._id);
+
             return (
               <motion.li
                 key={chapter._id}
