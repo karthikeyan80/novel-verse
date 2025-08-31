@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import novelRoutes from "./routes/novelRoutes.js";
 import chapterRoutes from "./routes/chapterRoutes.js";
 import User from "./models/User.js";
+import progressRoutes from "./routes/progressRoutes.js";
 
 dotenv.config({ quiet: true });
 const app = express();
@@ -15,6 +16,9 @@ app.use(express.json());
 // Routes
 app.use("/api/novels", novelRoutes);
 app.use("/api/chapters", chapterRoutes);
+
+
+app.use("/api/progress", progressRoutes);
 
 app.get("/", (req, res) => res.send("BookVerse API Running"));
 

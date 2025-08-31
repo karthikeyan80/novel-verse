@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@clerk/clerk-react";
 import { getNovelById } from "../api/novelApi";
 import { getChaptersByNovel } from "../api/chapterapi.js";
+import { getUserProgress } from "../api/progressapi.js"; // ✅ NEW
 import ClipLoader from "react-spinners/ClipLoader";
 import ChapterList from "../components/ChapterList.jsx";
 
@@ -12,6 +13,7 @@ const NovelDetails = () => {
   const { user } = useUser();
   const [novel, setNovel] = useState(null);
   const [chapters, setChapters] = useState([]);
+  const [progress, setProgress] = useState(null); // ✅ track last read chapter
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,6 +27,12 @@ const NovelDetails = () => {
         ]);
         setNovel(novelData);
         setChapters(chaptersData);
+
+        // ✅ Fetch user progress only if logged in
+        if (user) {
+          const userProgress = await getUserProgress(novelId, user.id);
+          setProgress(userProgress?.lastReadChapter || null);
+        }
       } catch (error) {
         console.error("Error fetching novel details:", error);
       } finally {
@@ -33,7 +41,7 @@ const NovelDetails = () => {
     };
 
     fetchData();
-  }, [novelId]);
+  }, [novelId, user]);
 
   const isOwner =
     user && novel && novel.uploadedBy && user.id === novel.uploadedBy;
@@ -104,7 +112,7 @@ const NovelDetails = () => {
                 ))}
               </div>
 
-              {/* Add Chapter Button (visible only to novel owner) */}
+              {/* Add Chapter Button (only for owner) */}
               {isOwner && (
                 <Link
                   to={`/novels/${novelId}/add-chapter`}
@@ -120,7 +128,10 @@ const NovelDetails = () => {
 
             {/* Chapter List */}
             <div className="px-6 md:px-16 w-full mt-10 mx-auto mb-4">
-              <ChapterList chapters={chapters} />
+              <ChapterList 
+                chapters={chapters} 
+                lastReadChapter={progress} // ✅ pass progress
+              />
             </div>
           </motion.div>
         )}

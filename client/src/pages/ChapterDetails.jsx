@@ -13,6 +13,7 @@ const ChapterDetails = () => {
 
   useEffect(() => {
     let mounted = true;
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -29,11 +30,22 @@ const ChapterDetails = () => {
 
         if (!novelId) return;
 
+        // fetch all chapters of novel
         const listRes = await axios.get(
           `http://localhost:5000/api/chapters/novel/${novelId}`
         );
         if (!mounted) return;
         setChaptersInNovel(listRes.data || []);
+
+        // ✅ save reading progress
+        try {
+          await axios.post("http://localhost:5000/api/progress/save", {
+            novelId,
+            chapterId: ch._id,
+          });
+        } catch (err) {
+          console.error("Error saving progress:", err);
+        }
       } catch (error) {
         console.error("Error fetching chapter or chapter list:", error);
       } finally {
