@@ -5,6 +5,7 @@ import { useUser } from "@clerk/clerk-react";
 import { getNovelById } from "../api/novelApi";
 import { getChaptersByNovel } from "../api/chapterapi.js";
 import { getUserProgress } from "../api/progressapi.js";
+import { addFavorite, removeFavorite, getFavorites } from "../api/favoriteapi.js";
 import ClipLoader from "react-spinners/ClipLoader";
 import ChapterList from "../components/ChapterList.jsx";
 
@@ -15,6 +16,10 @@ const NovelDetails = () => {
   const [chapters, setChapters] = useState([]);
   const [progress, setProgress] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Favorite states
+  const [favorites, setFavorites] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (!novelId) return;
@@ -31,8 +36,12 @@ const NovelDetails = () => {
         // Fetch user progress only if logged in
         if (user) {
           const userProgress = await getUserProgress(user.id, novelId);
-          console.log("Fetched user progress:", userProgress);
           setProgress(userProgress);
+
+          // Fetch favorites
+          const favs = await getFavorites(user.id);
+          setFavorites(favs);
+          setIsFavorite(favs.some((n) => n._id === novelId));
         }
       } catch (error) {
         console.error("Error fetching novel details:", error);
@@ -48,7 +57,6 @@ const NovelDetails = () => {
       if (user && novelId) {
         try {
           const userProgress = await getUserProgress(user.id, novelId);
-          console.log("Refreshed user progress:", userProgress);
           setProgress(userProgress);
         } catch (error) {
           console.error("Error refreshing progress:", error);
@@ -56,37 +64,35 @@ const NovelDetails = () => {
       }
     };
 
-    // Listen for page visibility changes (when user switches tabs/windows)
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        refreshProgress();
-      }
-    };
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) refreshProgress();
+    });
+    window.addEventListener("focus", refreshProgress);
+    window.addEventListener("popstate", () => setTimeout(refreshProgress, 100));
 
-    // Listen for window focus (when user returns to the tab)
-    const handleFocus = () => {
-      refreshProgress();
-    };
-
-    // Listen for navigation events (when user navigates back)
-    const handlePopState = () => {
-      setTimeout(refreshProgress, 100); // Small delay to ensure navigation is complete
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("focus", handleFocus);
-    window.addEventListener("popstate", handlePopState);
-
-    // Periodic refresh every 30 seconds to keep progress updated
     const intervalId = setInterval(refreshProgress, 30000);
 
     return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("focus", handleFocus);
-      window.removeEventListener("popstate", handlePopState);
+      document.removeEventListener("visibilitychange", refreshProgress);
+      window.removeEventListener("focus", refreshProgress);
+      window.removeEventListener("popstate", refreshProgress);
       clearInterval(intervalId);
     };
   }, [novelId, user]);
+
+  const handleFavorite = async () => {
+    if (!user) return;
+
+    if (isFavorite) {
+      await removeFavorite(user.id, novelId);
+    } else {
+      await addFavorite(user.id, novelId);
+    }
+
+    const favs = await getFavorites(user.id);
+    setFavorites(favs);
+    setIsFavorite(favs.some((n) => n._id === novelId));
+  };
 
   const isOwner =
     user && novel && novel.uploadedBy && user.id === novel.uploadedBy;
@@ -158,8 +164,8 @@ const NovelDetails = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-8 flex flex-wrap gap-4">
-                {/* Continue Reading Button - Show for any user who has started reading */}
+              <div className="mt-8 flex flex-wrap gap-4 items-center">
+                {/* Continue Reading */}
                 {user &&
                   progress &&
                   (progress.lastChapterId ||
@@ -171,10 +177,10 @@ const NovelDetails = () => {
                           : progress.lastChapterId?._id || chapters[0]?._id
                       }`}
                       className="inline-block px-4 sm:px-6 py-2 sm:py-3 rounded-lg 
-                    bg-gradient-to-r from-green-600 to-emerald-500 
-                    text-white font-semibold shadow-lg 
-                    hover:scale-105 transform transition duration-300
-                    text-sm sm:text-base text-center"
+                      bg-gradient-to-r from-green-600 to-emerald-500 
+                      text-white font-semibold shadow-lg 
+                      hover:scale-105 transform transition duration-300
+                      text-sm sm:text-base text-center"
                     >
                       <span className="flex items-center justify-center gap-2">
                         📖 Continue Reading
@@ -188,7 +194,7 @@ const NovelDetails = () => {
                     </Link>
                   )}
 
-                {/* Add Chapter Button (only for owner) */}
+                {/* Add Chapter (only for owner) */}
                 {isOwner && (
                   <Link
                     to={`/novels/${novelId}/add-chapter`}
@@ -200,6 +206,20 @@ const NovelDetails = () => {
                   >
                     ➕ Add Chapter
                   </Link>
+                )}
+
+                {/* Favorite Button */}
+                {user && (
+                  <button
+                    onClick={handleFavorite}
+                    className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-lg text-sm sm:text-base font-semibold transition duration-300 ${
+                      isFavorite
+                        ? "bg-red-600 hover:bg-red-700 text-white"
+                        : "bg-gray-700 hover:bg-gray-600 text-gray-200"
+                    }`}
+                  >
+                    {isFavorite ? "❤️ Remove Favorite" : "🤍 Add to Favorites"}
+                  </button>
                 )}
               </div>
             </div>

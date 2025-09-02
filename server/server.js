@@ -7,6 +7,10 @@ import chapterRoutes from "./routes/chapterRoutes.js";
 import User from "./models/User.js";
 import progressRoutes from "./routes/progressRoutes.js";
 
+import favoriteRoutes from "./routes/favoriteRoutes.js";
+
+
+
 dotenv.config({ quiet: true });
 const app = express();
 
@@ -19,6 +23,8 @@ app.use("/api/chapters", chapterRoutes);
 
 
 app.use("/api/progress", progressRoutes);
+
+app.use("/api/favorites", favoriteRoutes)
 
 app.get("/", (req, res) => res.send("BookVerse API Running"));
 
