@@ -8,25 +8,23 @@ import NovelDetails from "./pages/NovelDetails";
 import AddChapter from "./pages/AddChapter";
 import ChapterDetails from "./pages/ChapterDetails";
 import UserSync from "./components/userSync";
+import FavoritesPage from "./pages/FavoritePage";
 
 const App = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white flex flex-col">
       <main className="flex flex-col flex-1">
         {/* Signed Out State */}
-       <SignedOut>
-      <div className="flex justify-center items-center flex-1">
-        <SignIn/>
-{/* appearance={{
+        <SignedOut>
+          <div className="flex justify-center items-center flex-1">
+            <SignIn />
+            {/* appearance={{
     elements: {
       card: "clerk-card", // custom class
     },
-  }} */
-  }
-      </div>
-    </SignedOut>
-
-        
+  }} */}
+          </div>
+        </SignedOut>
 
         {/* Signed In State */}
         <SignedIn>
@@ -45,6 +43,7 @@ const App = () => {
             <Route path="/novels/:id" element={<NovelDetails />} />
             <Route path="/novels/:id/add-chapter" element={<AddChapter />} />
             <Route path="/chapters/:id" element={<ChapterDetails />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
           </Routes>
         </SignedIn>
       </main>

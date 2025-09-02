@@ -5,10 +5,8 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  HomeIcon,
-  UploadIcon,
-  BookIcon,
   Home07Icon,
+  BookIcon,
 } from "@hugeicons/core-free-icons";
 
 const Navbar = () => {
@@ -58,10 +56,21 @@ const Navbar = () => {
           <Link
             to="/"
             style={{ fontFamily: "'Lora', serif" }}
-            className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-2xl transition"
+            className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-2xl transition flex items-center gap-2"
           >
             <HugeiconsIcon icon={Home07Icon} />
+            Home
           </Link>
+
+          <Link
+            to="/favorites"
+            style={{ fontFamily: "'Lora', serif" }}
+            className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-2xl transition flex items-center gap-2"
+          >
+            <HugeiconsIcon icon={BookIcon} />
+            Favorites
+          </Link>
+
           <Link
             to="/create-novel"
             style={{ fontFamily: "'Lora', serif" }}
@@ -69,6 +78,7 @@ const Navbar = () => {
           >
             Upload Novel
           </Link>
+
           <UserButton />
         </div>
 
@@ -101,10 +111,23 @@ const Navbar = () => {
                 className="w-3/4 flex justify-center items-center 
             text-center text-lg font-semibold 
             bg-gray-700 hover:bg-gray-600 
-            px-6 py-3 rounded-xl transition"
+            px-6 py-3 rounded-xl transition gap-2"
                 onClick={() => setMenuOpen(false)}
               >
                 <HugeiconsIcon icon={Home07Icon} className="w-6 h-6" />
+                Home
+              </Link>
+
+              <Link
+                to="/favorites"
+                className="w-3/4 flex justify-center items-center 
+            text-center text-lg font-semibold 
+            bg-purple-600 hover:bg-purple-700 
+            px-6 py-3 rounded-xl transition gap-2"
+                onClick={() => setMenuOpen(false)}
+              >
+                <HugeiconsIcon icon={BookIcon} className="w-6 h-6" />
+                Favorites
               </Link>
 
               <Link
