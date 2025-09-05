@@ -1,22 +1,28 @@
-// src/api/commentApi.js
-import api from "/src/api/api.js";
+import axios from "axios";
 
-// Add a comment to a novel or chapter
-export const addComment = async (novelId, userId, content, chapterId = null) => {
-  const res = await api.post("/comments/add", {
-    novelId,
-    userId,
-    content,
-    chapterId, // optional
-  });
-  return res.data;
+const API_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
+export const getComments = async ({ novelId, chapterId }) => {
+  if (!novelId && !chapterId) return [];
+  const type = chapterId ? "chapter" : "novel";
+  const id = chapterId || novelId;
+  const res = await axios.get(`${API_URL}/api/comments/${type}/${id}`);
+  return res.data || [];
 };
 
-// Get all comments for a novel (and optionally for a specific chapter)
-export const getComments = async (novelId, chapterId = null) => {
-  const url = chapterId
-    ? `/comments/${novelId}?chapterId=${chapterId}`
-    : `/comments/${novelId}`;
-  const res = await api.get(url);
+export const addComment = async ({
+  userId,
+  userName,
+  novelId,
+  chapterId,
+  content,
+}) => {
+  const res = await axios.post(`${API_URL}/api/comments/add`, {
+    userId,
+    userName,
+    novelId: novelId || null,
+    chapterId: chapterId || null,
+    content,
+  });
   return res.data;
 };

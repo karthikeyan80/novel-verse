@@ -2,27 +2,35 @@ import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema(
   {
-    novelId: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "Novel", 
-      required: true 
+    novelId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Novel",
+      required: false,
+      default: null,
     },
-    chapterId: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "Chapter" 
-    }, // optional, if it's for a specific chapter
-    userId: { 
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: "User", 
-      required: true 
+    chapterId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Chapter",
+      required: false,
+      default: null,
     },
-    content: { 
-      type: String, 
-      required: true, 
-      trim: true 
+    userId: {
+      type: String,
+      required: true,
+    },
+    userName: {
+      type: String,
+      required: false,
+      default: "",
+      trim: true,
+    },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
     },
   },
-  { timestamps: true } // auto adds createdAt & updatedAt
+  { timestamps: true }
 );
 
 export default mongoose.model("Comment", commentSchema);

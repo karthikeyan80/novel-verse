@@ -1,10 +1,10 @@
-// src/pages/ChapterDetails.jsx
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
 import { saveReadingProgress, getUserProgress } from "../api/progressapi.js";
+import CommentsSection from "../components/CommentsSection.jsx";
 
 const ChapterDetails = () => {
   const { id } = useParams();
@@ -17,7 +17,6 @@ const ChapterDetails = () => {
   const contentRef = useRef(null);
   const saveTimeoutRef = useRef(null);
 
-  // Save progress with debouncing
   const saveProgress = useCallback(
     async (position) => {
       if (!user || !chapter) return;
@@ -48,18 +47,15 @@ const ChapterDetails = () => {
         const ch = chapterRes.data;
         setChapter(ch);
 
-        // normalize novelId (string only)
         const novelId = typeof ch.novel === "string" ? ch.novel : ch.novel?._id;
         if (!novelId) return;
 
-        // fetch all chapters of novel
         const listRes = await axios.get(
           `http://localhost:5000/api/chapters/novel/${novelId}`
         );
         if (!mounted) return;
         setChaptersInNovel(listRes.data || []);
 
-        // Load user's reading progress for this chapter
         if (user) {
           try {
             const userProgress = await getUserProgress(user.id, novelId);
@@ -75,7 +71,6 @@ const ChapterDetails = () => {
             ) {
               setReadingPosition(userProgress.readingPosition);
 
-              // Scroll to the saved position after content loads
               setTimeout(() => {
                 if (contentRef.current && mounted) {
                   const element = contentRef.current;
@@ -88,7 +83,6 @@ const ChapterDetails = () => {
                 }
               }, 100);
             } else {
-              // Save initial progress for this chapter
               await saveReadingProgress(user.id, novelId, ch._id, 0);
             }
           } catch (error) {
@@ -108,7 +102,6 @@ const ChapterDetails = () => {
     };
   }, [id, user]);
 
-  // Add scroll listener to track reading progress
   useEffect(() => {
     const element = contentRef.current;
     if (element && user && chapter) {
@@ -116,17 +109,13 @@ const ChapterDetails = () => {
         const scrollTop = element.scrollTop;
         const scrollHeight = element.scrollHeight;
         const clientHeight = element.clientHeight;
-
-        // Calculate reading position as percentage (0-100)
         const position = Math.min(
           100,
           Math.max(0, (scrollTop / (scrollHeight - clientHeight)) * 100)
         );
 
-        // Update reading position immediately
         setReadingPosition(position);
 
-        // Debounce save progress
         if (saveTimeoutRef.current) {
           clearTimeout(saveTimeoutRef.current);
         }
@@ -146,7 +135,6 @@ const ChapterDetails = () => {
     }
   }, [user, chapter, saveProgress]);
 
-  // prev / next calculation
   const { prevId, nextId } = useMemo(() => {
     if (!chapter || chaptersInNovel.length === 0)
       return { prevId: null, nextId: null };
@@ -167,7 +155,6 @@ const ChapterDetails = () => {
     return <p className="text-center text-red-500">Chapter not found.</p>;
   }
 
-  // normalized novelId for Back button
   const novelId =
     typeof chapter.novel === "string" ? chapter.novel : chapter.novel?._id;
 
@@ -178,15 +165,13 @@ const ChapterDetails = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Title */}
       <h1 className="text-2xl sm:text-3xl font-bold mb-4">
         Chapter {chapter.chapterNumber}: {chapter.chapterTitle}
       </h1>
 
-      {/* Chapter Content */}
       <div
         ref={contentRef}
-        className="mb-24 overflow-y-auto max-h-[70vh] pr-2"
+        className="mb-6 overflow-y-auto max-h-[70vh] pr-2"
         style={{ scrollbarWidth: "thin", scrollbarColor: "#4B5563 #1F2937" }}
       >
         <p className="text-gray-300 leading-relaxed whitespace-pre-line break-words text-sm sm:text-base">
@@ -194,8 +179,13 @@ const ChapterDetails = () => {
         </p>
       </div>
 
+      {/* Comments Section */}
+      <div className="mt-6">
+        <CommentsSection chapterId={chapter._id} />
+      </div>
+
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black/80 border-t border-gray-700 p-4 flex items-center justify-between gap-2">
+      <div className="sticky bottom-0 bg-black/80 border-t border-gray-700 p-4 flex items-center justify-between gap-2">
         <Link
           to={`/novels/${novelId}`}
           className="text-sm sm:text-base bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"

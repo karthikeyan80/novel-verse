@@ -8,6 +8,7 @@ import User from "./models/User.js";
 import progressRoutes from "./routes/progressRoutes.js";
 
 import favoriteRoutes from "./routes/favoriteRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 
 
 
@@ -25,6 +26,8 @@ app.use("/api/chapters", chapterRoutes);
 app.use("/api/progress", progressRoutes);
 
 app.use("/api/favorites", favoriteRoutes)
+
+app.use("/api/comments", commentRoutes);
 
 app.get("/", (req, res) => res.send("BookVerse API Running"));
 
