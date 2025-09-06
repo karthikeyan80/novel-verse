@@ -3,7 +3,11 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/clerk-react";
 import axios from "axios";
-import { saveReadingProgress, getUserProgress } from "../api/progressapi.js";
+import {
+  saveReadingProgress,
+  getUserProgress,
+  markChapterAsRead,
+} from "../api/progressapi.js";
 import CommentsSection from "../components/CommentsSection.jsx";
 
 const ChapterDetails = () => {
@@ -127,6 +131,16 @@ const ChapterDetails = () => {
       element.addEventListener("scroll", scrollHandler, { passive: true });
 
       return () => {
+        // On unmount, if user scrolled sufficiently, mark chapter as read
+        try {
+          if (user && chapter && readingPosition >= 80) {
+            const novelId =
+              typeof chapter.novel === "string"
+                ? chapter.novel
+                : chapter.novel?._id;
+            markChapterAsRead(user.id, novelId, chapter._id).catch(() => {});
+          }
+        } catch {}
         element.removeEventListener("scroll", scrollHandler);
         if (saveTimeoutRef.current) {
           clearTimeout(saveTimeoutRef.current);

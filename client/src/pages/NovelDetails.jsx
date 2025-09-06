@@ -32,7 +32,8 @@ const NovelDetails = () => {
         // ✅ Fetch user progress only if logged in
         if (user) {
           const userProgress = await getUserProgress(user.id, novelId);
-          setProgress(userProgress?.lastChapterId || null);
+          // Store the full progress object so ChapterList can access readChapters
+          setProgress(userProgress || null);
         }
       } catch (error) {
         console.error("Error fetching novel details:", error);
@@ -131,7 +132,8 @@ const NovelDetails = () => {
             <div className="px-6 md:px-16 w-full mt-10 mx-auto mb-4">
               <ChapterList
                 chapters={chapters}
-                lastReadChapter={progress} // ✅ pass progress
+                userProgress={progress}
+                novelId={novelId}
               />
             </div>
 
