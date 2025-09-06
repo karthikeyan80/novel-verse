@@ -61,16 +61,15 @@ router.post("/mark-read", async (req, res) => {
 router.get("/:userId/:novelId", async (req, res) => {
   try {
     const { userId, novelId } = req.params;
-    console.log("Fetching progress for:", { userId, novelId });
 
     const progress = await Progress.findOne({ userId, novelId })
-      .populate("lastChapterId")
-      .lean(); // Convert to plain JavaScript object
-
-    console.log("Found progress:", progress);
+      .populate({
+        path: "lastChapterId",
+        select: "_id chapterTitle chapterNumber novel",
+      })
+      .lean(); // Convert to plain JavaScript object without heavy fields
 
     if (!progress) {
-      console.log("No progress found, returning default");
       return res.json({
         lastChapterId: null,
         readingPosition: 0,
@@ -84,13 +83,6 @@ router.get("/:userId/:novelId", async (req, res) => {
       ...progress,
       readChapters: progress.readChapters?.map((id) => id.toString()) || [],
     };
-
-    console.log("Sending progress response:", {
-      lastChapterId: progressWithStringIds.lastChapterId,
-      readingPosition: progressWithStringIds.readingPosition,
-      readChaptersCount: progressWithStringIds.readChapters?.length,
-      readChapters: progressWithStringIds.readChapters,
-    });
 
     res.json(progressWithStringIds);
   } catch (error) {
