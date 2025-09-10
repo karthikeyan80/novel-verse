@@ -7,16 +7,31 @@ This project is being built step by step as a learning and portfolio project.
 
 ## 🚀 Features Implemented
 
-- **User Authentication** (Clerk integration planned)
-- **Novel Details Page**
-  - Displays information about each novel
-  - Fetches data dynamically from backend
-- **Chapter Details Page**
-  - Displays content of individual chapters
-- **Comment System**
-  - Users can add comments on **novels**
-  - Comments are displayed under each novel
-  - Backend API for storing and retrieving comments
+✅ **Authentication & User Management**  
+- Integrated with **Clerk** for secure login/signup.  
+- User sync with database.  
+
+✅ **Novels**  
+- Create novels with **title, description, and cover image** upload.  
+- View novel details with chapter listing.  
+- Only the **author** of a novel can upload new chapters.  
+
+✅ **Chapters**  
+- Add chapters with **title, number, and content**.  
+- Upload a `.txt` file → automatically converted into chapter content.  
+- Track **reader progress** (resume reading where you left off).  
+
+✅ **Favorites**  
+- Add/Remove novels from favorites.  
+- View all favorites in dedicated **Favorites Page**.  
+
+✅ **Comments**  
+- Comment on **novels** and **chapters**.  
+- Each comment linked with user identity (via Clerk).  
+
+✅ **Reader Features**  
+- Progress tracking per chapter.  
+- Continue reading from last saved point.  
 
 ---
 
@@ -25,25 +40,26 @@ This project is being built step by step as a learning and portfolio project.
 - **Frontend:** React, Tailwind CSS, Axios
 - **Backend:** Node.js, Express.js, MongoDB (Mongoose)
 - **Other Tools:** Clerk (Auth), Socket.io (planned for real-time features)
+- **File Uploads**: Multer (for cover images, txt parsing for chapters)
+- **AI Tools used**: Cursor ,TRAE , Zencoder
 
 ---
 
 ## Install dependencies
 
-FRONT-END
+Front-end
 
 ```
 cd client
 npm install
 ```
 
-BACK-END
+Back-end
 ```
 cd ../server
 npm install
 ```
 
----
 
 ## Setup environment variables
 
@@ -55,13 +71,13 @@ MONGO_URI=your_mongodb_connection_string
 
 ## Run the project
 
-RUN FRONT-END
+Executing Front-end
 ```
 cd client
 npm run dev
 ```
 
-RUN BACK-END
+Executing Back-end
 ```
 cd server
 npm start
