@@ -32,36 +32,40 @@ This project is being built step by step as a learning and portfolio project.
 
 FRONT-END
 
+```
 cd client
 npm install
-
+```
 
 BACK-END
-
+```
 cd ../server
 npm install
-
+```
 
 ---
 
 ## Setup environment variables
 
 Create a .env file inside server/ with:
-
+```
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
-
+```
 
 ## Run the project
 
 RUN FRONT-END
+```
 cd client
 npm run dev
-
+```
 
 RUN BACK-END
+```
 cd server
 npm start
+```
 
 
 
