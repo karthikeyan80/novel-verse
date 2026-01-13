@@ -113,10 +113,15 @@ const ChapterDetails = () => {
         const scrollTop = element.scrollTop;
         const scrollHeight = element.scrollHeight;
         const clientHeight = element.clientHeight;
-        const position = Math.min(
-          100,
-          Math.max(0, (scrollTop / (scrollHeight - clientHeight)) * 100)
-        );
+
+        // Check if content is scrollable
+        if (scrollHeight <= clientHeight) {
+          setReadingPosition(100);
+          return;
+        }
+
+        const denom = scrollHeight - clientHeight;
+        const position = Math.min(100, Math.max(0, (scrollTop / denom) * 100));
 
         setReadingPosition(position);
 
@@ -127,6 +132,9 @@ const ChapterDetails = () => {
           saveProgress(position);
         }, 1000);
       };
+
+      // Call handler once to set initial state
+      scrollHandler();
 
       element.addEventListener("scroll", scrollHandler, { passive: true });
 
@@ -183,54 +191,56 @@ const ChapterDetails = () => {
         Chapter {chapter.chapterNumber}: {chapter.chapterTitle}
       </h1>
 
-      <div
-        ref={contentRef}
-        className="mb-6 overflow-y-auto max-h-[70vh] pr-2"
-        style={{ scrollbarWidth: "thin", scrollbarColor: "#4B5563 #1F2937" }}
-      >
-        <p className="text-gray-300 leading-relaxed whitespace-pre-line break-words text-sm sm:text-base">
-          {chapter.content}
-        </p>
-      </div>
-
-      {/* Comments Section */}
-      <div className="mt-6">
-        <CommentsSection chapterId={chapter._id} />
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="sticky bottom-0 bg-black/80 border-t border-gray-700 p-4 flex items-center justify-between gap-2">
-        <Link
-          to={`/novels/${novelId}`}
-          className="text-sm sm:text-base bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
+      <div className="flex-1 flex flex-col">
+        <div
+          ref={contentRef}
+          className="flex-1 overflow-y-auto pr-2"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "#4B5563 #1F2937" }}
         >
-          ← Back to Novel
-        </Link>
+          <p className="text-gray-300 leading-relaxed whitespace-pre-line break-words text-sm sm:text-base">
+            {chapter.content}
+          </p>
+        </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            disabled={!prevId}
-            onClick={() => prevId && navigate(`/chapters/${prevId}`)}
-            className={`text-sm sm:text-base px-3 py-2 rounded transition ${
-              prevId
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-900 opacity-50 cursor-not-allowed"
-            }`}
+        {/* Chapter Navigation - always visible */}
+        <div className="mt-4 p-4 flex items-center justify-between gap-2 rounded">
+          <Link
+            to={`/novels/${novelId}`}
+            className="text-sm sm:text-base bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded transition"
           >
-            ← Previous
-          </button>
+            ← Back to Novel
+          </Link>
 
-          <button
-            disabled={!nextId}
-            onClick={() => nextId && navigate(`/chapters/${nextId}`)}
-            className={`text-sm sm:text-base px-3 py-2 rounded transition ${
-              nextId
-                ? "bg-gray-700 hover:bg-gray-600"
-                : "bg-gray-900 opacity-50 cursor-not-allowed"
-            }`}
-          >
-            Next →
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              disabled={!prevId}
+              onClick={() => prevId && navigate(`/chapters/${prevId}`)}
+              className={`text-sm sm:text-base px-3 py-2 rounded transition ${
+                prevId
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "bg-gray-900 opacity-50 cursor-not-allowed"
+              }`}
+            >
+              ← Previous
+            </button>
+
+            <button
+              disabled={!nextId}
+              onClick={() => nextId && navigate(`/chapters/${nextId}`)}
+              className={`text-sm sm:text-base px-3 py-2 rounded transition ${
+                nextId
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "bg-gray-900 opacity-50 cursor-not-allowed"
+              }`}
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+
+        {/* Comments Section - appears below the chapter content and navigation */}
+        <div className="mt-6">
+          <CommentsSection chapterId={chapter._id} />
         </div>
       </div>
     </motion.div>

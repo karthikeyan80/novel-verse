@@ -3,6 +3,7 @@ import { UserButton } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
+import { Heart } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Home07Icon,
@@ -65,9 +66,9 @@ const Navbar = () => {
           <Link
             to="/favorites"
             style={{ fontFamily: "'Lora', serif" }}
-            className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-2xl transition flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-800 px-4 py-2 rounded-2xl transition flex items-center gap-2"
           >
-            <HugeiconsIcon icon={BookIcon} />
+            <Heart className="w-5 h-5 text-black" />
             Favorites
           </Link>
 
@@ -122,7 +123,7 @@ const Navbar = () => {
                 to="/favorites"
                 className="w-3/4 flex justify-center items-center 
             text-center text-lg font-semibold 
-            bg-purple-600 hover:bg-purple-700 
+            bg-cyan-600 hover:bg-cyan-700 
             px-6 py-3 rounded-xl transition gap-2"
                 onClick={() => setMenuOpen(false)}
               >

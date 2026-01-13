@@ -78,7 +78,7 @@ const FavoritesPage = () => {
   return (
     <div className="min-h-screen px-6 md:px-12 py-10 text-white">
       <h1 className="text-3xl md:text-4xl font-extrabold mb-8 flex items-center gap-2">
-        <Heart className="text-pink-500 w-8 h-8" />
+        <Heart className="text-cyan-800 w-8 h-8" />
         My Favorites
       </h1>
 
